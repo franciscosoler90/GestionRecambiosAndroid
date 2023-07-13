@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ © Copyright 2023 , Francisco José Soler Conchello
+  -->
+
+<CheckedTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/ack_info1"
+    android:textSize="16sp"
+    android:fontFamily="@font/lato"
+    android:textColor="@color/white"
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp"
+
+    >
+
+</CheckedTextView>

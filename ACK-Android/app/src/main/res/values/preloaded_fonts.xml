@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ © Copyright 2023 , Francisco José Soler Conchello
+  -->
+
+<resources>
+    <array name="preloaded_fonts" translatable="false">
+        <item>@font/anton</item>
+        <item>@font/lato</item>
+        <item>@font/lato_bold</item>
+        <item>@font/lato_thin</item>
+        <item>@font/oxygen_bold</item>
+    </array>
+</resources>

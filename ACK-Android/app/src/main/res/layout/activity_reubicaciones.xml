@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ © Copyright 2023 , Francisco José Soler Conchello
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ReubicacionesActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarEditar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/AppTheme"
+        android:elevation="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:subtitleTextColor="@color/white"
+        app:titleTextColor="@color/white" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:orientation="vertical">
+
+                <Spinner
+                    android:id="@+id/spinnerAlmacen"
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:background="@drawable/spinner_border"
+                    android:minHeight="48dp"
+                    android:prompt="@string/seleccioneOpcion"
+                    android:spinnerMode="dialog"
+                    tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:paddingEnd="10dp">
+
+                        <TextView
+                            android:id="@+id/viewLabelArticulo"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:contentDescription="@string/articulo"
+                            android:fontFamily="@font/lato_bold"
+                            android:paddingTop="16dp"
+                            android:text="@string/articulo"
+                            android:textStyle="bold"
+                            tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+
+                        <TextView
+                            android:id="@+id/viewLabelArticulo2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_weight="1"
+                            android:contentDescription="@string/articulo"
+                            android:fontFamily="@font/lato_bold"
+                            android:text="@string/descripcion"
+                            android:textAlignment="center"
+                            android:textStyle="bold"
+                            tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <EditText
+                            android:id="@+id/articulo"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:ems="10"
+                            android:importantForAutofill="no"
+                            android:inputType="text"
+                            android:maxLength="18"
+                            android:minHeight="48dp"
+                            android:textSize="20sp"
+                            tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize,TouchTargetSizeCheck" />
+
+                        <TextView
+                            android:id="@+id/descripcion"
+                            android:layout_width="match_parent"
+                            android:layout_height="24dp"
+                            android:autofillHints=""
+                            android:ems="10"
+                            android:fontFamily="@font/lato"
+                            android:gravity="center_vertical"
+                            android:includeFontPadding="false"
+                            android:labelFor="@id/viewLabelArticulo"
+                            android:minHeight="48dp"
+                            android:textColor="#3F51B5"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            tools:ignore="LabelFor, DuplicateSpeakableTextCheck,SpeakableTextPresentCheck" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <TableLayout
+                    android:id="@+id/tabla"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clickable="true"
+                    android:fadingEdge="horizontal|vertical"
+                    android:paddingTop="4dp"
+                    android:showDividers="middle|beginning|end"
+                    tools:ignore="TouchTargetSizeCheck">
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?attr/colorPrimary"
+                        android:padding="5dp"
+                        tools:ignore="UselessParent">
+
+                        <TextView
+                            android:id="@+id/textView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/ubicacion"
+                            android:textColor="#FFFFFF" />
+
+                        <TextView
+                            android:id="@+id/textView2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/existencias"
+                            android:textColor="#FFFFFF" />
+                    </TableRow>
+                </TableLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:paddingEnd="10dp">
+
+                        <TextView
+                            android:id="@+id/viewLabelArticulo3"
+                            android:layout_width="match_parent"
+                            android:layout_height="54dp"
+                            android:contentDescription="@string/articulo"
+                            android:fontFamily="@font/lato_bold"
+                            android:paddingTop="16dp"
+                            android:text="@string/ubicacionOrigen"
+                            android:textStyle="bold"
+                            tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+
+                        <TextView
+                            android:id="@+id/viewLabelArticulo4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="54dp"
+                            android:contentDescription="@string/articulo"
+                            android:fontFamily="@font/lato_bold"
+                            android:paddingTop="16dp"
+                            android:text="@string/ubicacionDestino"
+                            android:textStyle="bold"
+                            tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+
+                        <TextView
+                            android:id="@+id/viewLabelArticulo5"
+                            android:layout_width="match_parent"
+                            android:layout_height="54dp"
+                            android:contentDescription="@string/articulo"
+                            android:fontFamily="@font/lato_bold"
+                            android:paddingTop="16dp"
+                            android:text="@string/unidades1"
+                            android:textStyle="bold"
+                            tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical">
+
+                        <EditText
+                            android:id="@+id/ubicacionOrigen"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:importantForAutofill="no"
+                            android:inputType="text"
+                            android:minHeight="54dp"
+                            android:textSize="24sp"
+                            tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+
+                        <EditText
+                            android:id="@+id/ubicacionDestino"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:importantForAutofill="no"
+                            android:inputType="text"
+                            android:maxLength="6"
+                            android:minHeight="54dp"
+                            android:textSize="24sp"
+                            tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+
+                        <EditText
+                            android:id="@+id/unidades"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:importantForAutofill="no"
+                            android:inputType="number|numberDecimal|numberSigned"
+                            android:minHeight="54dp"
+                            android:textSize="24sp"
+                            tools:ignore="LabelFor,SpeakableTextPresentCheck,VisualLintTextFieldSize" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/buttonLimpiar"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:backgroundTint="@color/blue_ack2"
+                        android:fontFamily="@font/lato_bold"
+                        android:gravity="center"
+                        android:text="@string/limpiar"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/white"
+                        android:textStyle="bold"
+                        app:cornerRadius="8dp"
+                        app:icon="@drawable/round_eject_24"
+                        app:iconTint="#FFFFFF"
+                        tools:ignore="TextContrastCheck,VisualLintButtonSize" />
+
+                    <Button
+                        android:id="@+id/buttonReubicar"
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:backgroundTint="#198754"
+                        android:fontFamily="@font/lato_bold"
+                        android:gravity="center"
+                        android:text="@string/reubicar"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/white"
+                        android:textStyle="bold"
+                        app:cornerRadius="8dp"
+                        tools:ignore="TextContrastCheck,VisualLintButtonSize" />
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+        </ScrollView>
+
+</LinearLayout>

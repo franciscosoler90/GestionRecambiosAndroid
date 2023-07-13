@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ © Copyright 2023 , Francisco José Soler Conchello
+  -->
+
+<resources>
+    <color name="blue_200">#81D4FA</color>
+    <color name="blue_700">#0288D1</color>
+    <color name="blue_ack">#233b5d</color>
+    <color name="blue_ack2">#2d4970</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="green1">#198754</color>
+    <color name="green2">#13633E</color>
+</resources>

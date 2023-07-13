@@ -1,0 +1,55 @@
+<!--
+  ~ © Copyright 2023 , Francisco José Soler Conchello
+  -->
+
+<resources>
+    <string name="app_name">ACK</string>
+    <string name="Username">Usuario</string>
+    <string name="Password">Contraseña</string>
+    <string name="Inventario">Inventario</string>
+    <string name="todo">TODO</string>
+    <string name="almacen">Almacén</string>
+    <string name="codigo">Código</string>
+    <string name="descripcion">Descripción</string>
+    <string name="ubicacion">Ubicación</string>
+    <string name="existencias">Existencias</string>
+    <string name="unidades_contadas">Unidades contadas</string>
+    <string name="unidades_previstas">Unidades previstas</string>
+    <string name="confirmar">Confirmar</string>
+    <string name="login">Iniciar Sesión</string>
+    <string name="picking">Picking</string>
+    <string name="unidades_recogidas2">Unidades pendientes de recoger</string>
+    <string name="mercanciaIVECO">Mercancía IVECO</string>
+    <string name="mercanciaNoIVECO">Mercancía no IVECO</string>
+    <string name="Salir">Salir</string>
+    <string name="ack_info1">Polígono Malpica, Calle F Oeste</string>
+    <string name="ack_info2">Grupo G. Quejido, nave 75</string>
+    <string name="ack_info3">50016 - Zaragoza</string>
+    <string name="ack_info4">(+34) 976 46 52 15</string>
+    <string name="ack_info5">https://ack.es</string>
+    <string name="codigo1">Código: </string>
+    <string name="ubicacion1">Ubicación: </string>
+    <string name="seleccioneOpcion">Seleccione una opción</string>
+    <string name="defaultNumber">Lector / Teclado</string>
+    <string name="cliente">Cliente: </string>
+    <string name="estado">Estado: </string>
+    <string name="pendiente">Pendiente</string>
+    <string name="gestionRecambios">Gestión de recambios</string>
+    <string name="conformarCaja">Validar y actualizar caja</string>
+    <string name="entradaMercancia">Caja</string>
+    <string name="todosComprobados">Todos OK</string>
+    <string name="almacen2">Alm.: </string>
+    <string name="ubicacion2">Ubi.: </string>
+    <string name="unidades1">Unidades: </string>
+    <string name="unidades2">Unid. previstas: </string>
+    <string name="unidades3">Unid. contadas: </string>
+    <string name="version">v. 1.0.2</string>
+    <string name="pedido">Pedido</string>
+    <string name="reubicaciones">Reubicaciones</string>
+    <string name="reubicar">Reubicar</string>
+    <string name="articulo">Articulo</string>
+    <string name="limpiar">Limpiar</string>
+    <string name="ubicacionOrigen">Ubicación origen: </string>
+    <string name="ubicacionDestino">Ubicación destino: </string>
+    <string name="title_activity_reubicaciones">ReubicacionesActivity</string>
+</resources>

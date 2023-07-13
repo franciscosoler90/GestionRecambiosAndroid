@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ © Copyright 2023 , Francisco José Soler Conchello
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".mercancia.MercanciaLineasActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:elevation="20dp"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/AppTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:subtitleTextColor="@color/white"
+        app:titleTextColor="@color/white" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/viewLabelCodigo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/codigo"
+            android:fontFamily="@font/lato_bold"
+            android:text="@string/codigo"
+            android:textStyle="bold"
+            tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+
+        <TextView
+            android:id="@+id/txtCodigo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:backgroundTint="@android:color/holo_blue_bright"
+            android:ems="10"
+            android:fontFamily="@font/lato"
+            android:includeFontPadding="false"
+            android:labelFor="@+id/viewLabelCodigo"
+            android:textColor="#3F51B5"
+            android:textSize="16sp"
+            tools:ignore="LabelFor, DuplicateSpeakableTextCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/viewLabelDescripcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/descripcion"
+            android:fontFamily="@font/lato_bold"
+            android:text="@string/descripcion"
+            android:textStyle="bold"
+            tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+
+        <TextView
+            android:id="@+id/txtDescripcion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:backgroundTint="@android:color/holo_blue_bright"
+            android:ems="10"
+            android:fontFamily="@font/lato"
+            android:includeFontPadding="false"
+            android:labelFor="@id/viewLabelDescripcion"
+            android:textColor="#3F51B5"
+            android:textSize="16sp"
+            tools:ignore="LabelFor, DuplicateSpeakableTextCheck,SpeakableTextPresentCheck" />
+
+        <TextView
+            android:id="@+id/viewLabelAlmacen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lato_bold"
+            android:text="@string/almacen"
+            android:textStyle="bold"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <TextView
+            android:id="@+id/txtAlmacen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:backgroundTint="@android:color/holo_blue_bright"
+            android:ems="10"
+            android:fontFamily="@font/lato"
+            android:includeFontPadding="false"
+            android:labelFor="@+id/viewLabelAlmacen"
+            android:textColor="#3F51B5"
+            android:textSize="16sp"
+            tools:ignore="LabelFor, DuplicateSpeakableTextCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/viewLabelUbicacion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/ubicacion"
+            android:fontFamily="@font/lato_bold"
+            android:text="@string/ubicacion"
+            android:textStyle="bold"
+            tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+
+        <TextView
+            android:id="@+id/txtUbicacion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:backgroundTint="@android:color/holo_blue_bright"
+            android:ems="10"
+            android:fontFamily="@font/lato"
+            android:includeFontPadding="false"
+            android:labelFor="@id/viewLabelUbicacion"
+            android:textColor="#3F51B5"
+            android:textSize="16sp"
+            tools:ignore="LabelFor, DuplicateSpeakableTextCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/viewUnidades"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/existencias"
+            android:fontFamily="@font/lato_bold"
+            android:text="@string/unidades_previstas"
+            android:textStyle="bold"
+            tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+
+        <TextView
+            android:id="@+id/txtUnidades"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:backgroundTint="@android:color/holo_blue_bright"
+            android:ems="10"
+            android:fontFamily="@font/lato"
+            android:includeFontPadding="false"
+            android:labelFor="@id/viewLabelUbicacion"
+            android:textColor="#3F51B5"
+            android:textSize="16sp"
+            tools:ignore="LabelFor, DuplicateSpeakableTextCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/viewUnidadesRecogidas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/existencias"
+            android:fontFamily="@font/lato_bold"
+            android:text="@string/unidades_contadas"
+            android:textStyle="bold"
+            tools:ignore="SpeakableTextPresentCheck,SpeakableTextPresentCheck,SpeakableTextPresentCheck" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.9"
+                app:endIconMode="clear_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtUnidadesRecogidas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal"
+                    android:textColorHint="#616161"
+                    tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck,VisualLintTextFieldSize" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <EditText
+                android:id="@+id/editTextCodigo"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1"
+                android:cursorVisible="false"
+                android:enabled="true"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:fontFamily="@font/lato"
+                android:importantForAutofill="no"
+                android:inputType="number"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
+                android:visibility="visible"
+                tools:ignore="LabelFor, DuplicateSpeakableTextCheck,SpeakableTextPresentCheck,TouchTargetSizeCheck,VisualLintBounds" />
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/buttonContar"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginEnd="10dp"
+                android:backgroundTint="#F57C00"
+                android:fontFamily="@font/lato_bold"
+                android:gravity="center"
+                android:text="@string/defaultNumber"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textStyle="bold"
+                app:cornerRadius="8dp"
+                tools:ignore="TextContrastCheck,DuplicateSpeakableTextCheck,SpeakableTextPresentCheck" />
+
+            <Button
+                android:id="@+id/buttonConfirmar"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#198754"
+                android:fontFamily="@font/lato_bold"
+                android:gravity="center"
+                android:text="@string/confirmar"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                android:textStyle="bold"
+                app:cornerRadius="8dp"
+                tools:ignore="TextContrastCheck,VisualLintButtonSize" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

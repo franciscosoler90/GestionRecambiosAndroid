@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ © Copyright 2023 , Francisco José Soler Conchello
+  -->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="false"
+        android:theme="@style/Theme.ACK"
+        tools:targetApi="33">
+        <activity
+            android:name=".ReubicacionesActivity"
+            android:exported="false"
+            android:label="@string/title_activity_reubicaciones"
+            android:theme="@style/Theme.ACK" />
+        <activity
+            android:name=".picking.PickingFilesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".inventory.Inventory2Activity"
+            android:exported="false" />
+        <activity
+            android:name=".mercancia.MercanciaCajas2Activity"
+            android:exported="false" />
+        <activity
+            android:name=".mercancia.MercanciaCajasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".mercancia.MercanciaLineasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".picking.Picking2Activity"
+            android:exported="false" />
+        <activity
+            android:name=".picking.PickingEditarActivity"
+            android:exported="false" />
+        <activity
+            android:name=".inventory.InventoryEditarActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MenuActivity"
+            android:exported="false" />
+        <activity
+            android:name=".inventory.InventoryFilesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+    </application>
+
+</manifest>

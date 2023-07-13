@@ -1,0 +1,38 @@
+<!--
+  ~ © Copyright 2023 , Francisco José Soler Conchello
+  -->
+
+<resources>
+    <!-- Base application theme. -->
+    <style name="Theme.ACK" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/blue_ack</item>
+        <item name="colorPrimaryVariant">#233b5d</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/blue_200</item>
+        <item name="colorSecondaryVariant">@color/blue_700</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+        <item name="android:colorControlNormal">@color/white</item>
+
+        <item name="android:background">@null</item>
+
+
+    </style>
+
+    //Searchview
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:editTextColor">@color/white</item>
+        <item name="android:textColorHint">@color/white</item>
+    </style>
+
+    //App Bar
+    <style name="AppTheme">
+        <item name="actionBarSize">82dp</item>
+    </style>
+
+</resources>
