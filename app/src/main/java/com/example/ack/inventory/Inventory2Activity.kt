@@ -87,7 +87,7 @@ class Inventory2Activity : AppCompatActivity(), SearchView.OnQueryTextListener {
             val db = DbInventory()
 
             //Llama a la función initListView con la lista de Inventario
-            initListView(db.readInventory(tmiNro, empCod, tmiSer, almCod))
+            initListView(db.readInventoryLineas(tmiNro, empCod, tmiSer, almCod))
         }
     }
 

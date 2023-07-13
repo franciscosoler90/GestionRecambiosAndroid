@@ -10,7 +10,7 @@ import java.sql.ResultSet
 
 class DbInventory {
 
-    fun readInventoryFiles(username : String?) : List<InventarioCabecera>{
+    fun readInventoryCabeceras(username : String?) : List<InventarioCabecera>{
 
         val lista : ArrayList<InventarioCabecera> = ArrayList()
 
@@ -65,7 +65,7 @@ class DbInventory {
         return lista.toList()
     }
 
-    fun readInventory(id : String?, empCod : String?, tmiSer : String?, almCod : String?) : List<InventarioLineas>{
+    fun readInventoryLineas(id : String?, empCod : String?, tmiSer : String?, almCod : String?) : List<InventarioLineas>{
 
         val lista : ArrayList<InventarioLineas> = ArrayList()
 
@@ -86,7 +86,7 @@ class DbInventory {
             }
 
             //Cadena de texto Query SQL
-            val query = "SELECT * FROM TRTMINVL (NOLOCK) WHERE TMINro = ? AND EmpCod = ?  AND TMISer = ? AND AlmCod = ? AND TMILinEst < 3"
+            val query = "SELECT * FROM TRTMINVL (NOLOCK) WHERE TMINro = ? AND EmpCod = ? AND TMISer = ? AND AlmCod = ? AND TMILinEst < 3 ORDER BY TMILinEst"
 
             // Crear una instancia de PreparedStatement
             val stmt = connect2.prepareStatement(query)

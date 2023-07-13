@@ -68,7 +68,7 @@ class InventoryFilesActivity : AppCompatActivity() {
             val db = DbInventory()
 
             //LLama a la función de readInventory para rellenar la lista con elementos
-            initListView(db.readInventoryFiles(username))
+            initListView(db.readInventoryCabeceras(username))
         }
     }
 

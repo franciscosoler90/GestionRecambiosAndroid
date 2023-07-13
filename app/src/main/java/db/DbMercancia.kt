@@ -332,7 +332,7 @@ class DbMercancia {
             }
 
             // Cadena de texto Query SQL
-            val query = "SELECT * FROM TRTMCAJL (NOLOCK) WHERE TMCAriNumP = ?"
+            val query = "SELECT * FROM TRTMCAJL (NOLOCK) WHERE TMCAriNumP = ? ORDER BY TMCEstLin"
 
             // Crear una instancia de PreparedStatement
             val stmt = connect2.prepareStatement(query)

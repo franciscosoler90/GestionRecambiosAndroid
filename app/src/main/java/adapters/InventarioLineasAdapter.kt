@@ -94,15 +94,11 @@ class InventarioViewHolder(view: View): RecyclerView.ViewHolder(view){
 
     fun render(inventarioLineas: InventarioLineas, onClickListener: (InventarioLineas) -> Unit){
 
-        val codigo = "Código: "
-        val ubicacion = "Ubicación: "
-
         //Escribe en los TextView
         binding.TextTitle.text = inventarioLineas.TMIArtDes
-        binding.labelTextDescription.text = codigo
         binding.TextDescription.text = inventarioLineas.TMIArtCod
-        binding.labelTextDescription2.text = ubicacion
         binding.TextDescription2.text = inventarioLineas.TMIArtUbi
+
 
         //Listener al hacer clic
         itemView.setOnClickListener { onClickListener(inventarioLineas) }
@@ -114,6 +110,10 @@ class InventarioViewHolder(view: View): RecyclerView.ViewHolder(view){
                 1 -> {
                     binding.cardArticulo.setCardBackgroundColor(Color.parseColor("#008A10"))
                     binding.TextEstado.text = "CONTADO"
+
+                    //Unidades contadas
+                    binding.textUnidades.text = "Unidades contadas: "
+                    binding.textUnidades2.text = inventarioLineas.TMIUniCon
                 }
             }
 
