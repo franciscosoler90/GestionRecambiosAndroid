@@ -173,7 +173,7 @@
                         android:id="@+id/textUnidades2"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="0.5"
                         android:fontFamily="@font/lato_bold"
                         android:gravity="end"
                         android:textAppearance="?attr/textAppearanceBody2"
@@ -184,7 +184,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/TextTitle"
-                        tools:text="0.0" />
+                        tools:text="1.00" />
                 </LinearLayout>
             </LinearLayout>
 

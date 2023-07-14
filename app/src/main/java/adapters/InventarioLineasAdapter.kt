@@ -112,8 +112,11 @@ class InventarioViewHolder(view: View): RecyclerView.ViewHolder(view){
                     binding.TextEstado.text = "CONTADO"
 
                     //Unidades contadas
-                    binding.textUnidades.text = "Unidades contadas: "
-                    binding.textUnidades2.text = inventarioLineas.TMIUniCon
+                    binding.textUnidades.text = "Unidades:"
+
+                    val unidadesConDecimales = inventarioLineas.TMIUniCon?.toDouble()
+                    val unidadesFormateadas = String.format("%.2f", unidadesConDecimales)
+                    binding.textUnidades2.text = unidadesFormateadas
                 }
             }
 
