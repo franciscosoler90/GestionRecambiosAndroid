@@ -46,14 +46,16 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val nombreEmpresa = binding.spinnerCompany.selectedItem.toString().trim()
-            val username = binding.username.text.toString().uppercase()
-            val password = binding.password.text.toString()
+            val selectedItem = binding.spinnerCompany.selectedItem
+            val nombreEmpresa = selectedItem?.toString()?.trim() ?: ""
 
             if (nombreEmpresa.isEmpty()) {
                 Toast.makeText(this,"No hay opciones disponibles",Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
+
+            val username = binding.username.text.toString().uppercase()
+            val password = binding.password.text.toString()
 
             if (username.isEmpty()) {
                 Toast.makeText(this,"Rellena el campo de Usuario",Toast.LENGTH_LONG).show()
