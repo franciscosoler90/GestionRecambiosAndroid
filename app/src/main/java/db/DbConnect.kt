@@ -4,6 +4,7 @@
 
 package db
 
+import android.os.Handler
 import android.os.StrictMode
 import java.sql.Connection
 import java.sql.DriverManager
@@ -12,59 +13,63 @@ import java.sql.SQLException
 class DbConnect {
 
     companion object {
-        fun connectDB(): Pair<Connection?, String> {
+        data class ConnectionResult(val connection: Connection?, val errorMessage: String?)
 
-            // Variables para almacenar la conexión y el mensaje de error
+        fun connectDB(handler: Handler, onConnectionResult: (ConnectionResult) -> Unit) {
             var connection: Connection? = null
-            var errorMessage = ""
-            var control = ""
+            var errorMessage: String?
 
-            // Intentar establecer la conexión
             try {
-
-                // Cadena de texto con en enlace de conexión
                 val connectURL = "jdbc:jtds:sqlserver://${DbValues.ip.trim()}:${DbValues.port.trim()}/${DbValues.database.trim()}"
 
-                control = "1"
-
-                // Política StrictMode aplicada a un determinado hilo, permitir todos
                 val politics = StrictMode.ThreadPolicy.Builder().permitAll().build()
-
-                control = "2"
-
-                // Aplicar los cambios
                 StrictMode.setThreadPolicy(politics)
 
-                control = "3"
-
-                // Nombre de la clase
                 Class.forName("net.sourceforge.jtds.jdbc.Driver")
 
-                control = "4"
+                // Intentar conectarse a la base de datos y obtener la conexión
+                val connectionRunnable = Runnable {
+                    connection = try {
+                        DriverManager.getConnection(connectURL, DbValues.username.trim(), DbValues.password.trim())
+                    } catch (e: SQLException) {
+                        null
+                    } catch (e: ClassNotFoundException) {
+                        null
+                    } catch (e: Exception) {
+                        null
+                    }
 
-                // Como parte de su inicialización, la clase DriverManager intentará cargar las clases de controladores referenciadas en la propiedad del sistema
-                connection = DriverManager.getConnection(connectURL, DbValues.username.trim(), DbValues.password.trim())
+                    errorMessage = if (connection != null) {
+                        "Conexión a la base de datos satisfactoria"
+                    } else {
+                        "Ha ocurrido un error en la conexión con la base de datos"
+                    }
 
-                control = "5"
+                    // Cerrar la conexión si se estableció
+                    connection?.close()
 
-                errorMessage = "Conexión a la base de datos satisfactoria"
+                    // Enviar los resultados al Handler
+                    handler.post {
+                        // Aquí puedes manejar los resultados en el hilo principal
+                        // Por ejemplo, mostrar un Toast con el mensaje de error, etc.
+                        onConnectionResult(ConnectionResult(connection, errorMessage))
+                    }
+                }
 
-                control = "6"
+                // Establecer un tiempo límite para la conexión
+                val timeoutMillis = 3000L
 
-            } catch (e: SQLException) {
-                // Error específico de SQL
-                errorMessage = "Ha ocurrido un error de SQL en la conexión con la base de datos:\n" +
-                        "${control}\n${e.message}"
-            } catch (e: ClassNotFoundException) {
-                // Error de clase no encontrada
-                errorMessage = "No se ha encontrado la clase del controlador de la base de datos:\n${e.message}"
+                // Ejecutar el Runnable después del tiempo límite especificado
+                handler.postDelayed(connectionRunnable, timeoutMillis)
+
             } catch (e: Exception) {
-                // Otros errores
                 errorMessage = "Ha ocurrido un error en la conexión con la base de datos:\n${e.message}"
-            }
 
-            // Retornar la conexión y el mensaje de error
-            return Pair(connection, errorMessage)
+                // Enviar los resultados al Handler (incluso si hubo una excepción)
+                handler.post {
+                    onConnectionResult(ConnectionResult(connection, errorMessage))
+                }
+            }
         }
     }
 }

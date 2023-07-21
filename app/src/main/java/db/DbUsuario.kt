@@ -4,12 +4,17 @@
 
 package db
 
+import android.os.Handler
+import android.os.Looper
 import data.Usuario
+import java.sql.Connection
 import java.sql.ResultSet
 
 class DbUsuario {
 
     fun getUsuario(username : String) : Usuario?{
+
+        var resultado : Usuario? = null
 
         //Si el nombre de usuario está vacio
         if (username.isEmpty()) {
@@ -18,44 +23,48 @@ class DbUsuario {
 
         try{
 
-            val connect = DbConnect.connectDB()
-            val connect2 = connect.first
+            val handler = Handler(Looper.getMainLooper())
 
-            //si es nulo, finaliza
-            if(connect2 == null) {
-                println("Conexión nula")
-                return null
-            }
+            DbConnect.connectDB(handler) { connectionResult ->
+                val connection: Connection? = connectionResult.connection
+                val errorMessage: String? = connectionResult.errorMessage
 
-            //Cadena de texto Query SQL
-            val query = "SELECT UsuCod, UsuNom FROM TRUSU (NOLOCK) WHERE UsuCod = ?"
+                if (connection != null) {
 
-            // Crear una instancia de PreparedStatement
-            val stmt = connect2.prepareStatement(query)
+                    //Cadena de texto Query SQL
+                    val query = "SELECT UsuCod, UsuNom FROM TRUSU (NOLOCK) WHERE UsuCod = ?"
 
-            // Establecer el parámetro en el PreparedStatement
-            stmt.setString(1, username)
+                    // Crear una instancia de PreparedStatement
+                    val stmt = connection.prepareStatement(query)
 
-            val rs : ResultSet = stmt.executeQuery()
+                    // Establecer el parámetro en el PreparedStatement
+                    stmt.setString(1, username)
 
-            //Ejecución
-            connect2.run {
+                    val rs : ResultSet = stmt.executeQuery()
 
-                while(rs.next()){
+                    //Ejecución
+                    connection.run {
 
-                    val usuario = Usuario(
-                        rs.getString(1).trim(),
-                        rs.getString(2).trim())
+                        while(rs.next()){
 
-                    //cierra conexiones
-                    rs.close()
-                    stmt.close()
-                    close()
+                            resultado = Usuario(
+                                rs.getString(1).trim(),
+                                rs.getString(2).trim())
 
-                    return usuario
+                            //cierra conexiones
+                            rs.close()
+                            stmt.close()
+                            close()
 
+                        }
+                    }
+
+                } else {
+                    println("Error en la conexión: $errorMessage")
                 }
             }
+
+            return resultado
 
         }catch(e : Exception){
             println(e)
@@ -67,6 +76,8 @@ class DbUsuario {
 
     fun getIVECO(empCod : String) : Boolean{
 
+        var resultado = false
+
         //Si el nombre de empresa está vacio
         if (empCod.isEmpty()) {
             return false
@@ -74,46 +85,51 @@ class DbUsuario {
 
         try{
 
-            val connect = DbConnect.connectDB()
-            val connect2 = connect.first
+            val handler = Handler(Looper.getMainLooper())
 
-            //si es nulo, finaliza
-            if(connect2 == null) {
-                println("Conexión nula")
-                return false
-            }
+            DbConnect.connectDB(handler) { connectionResult ->
+                val connection: Connection? = connectionResult.connection
+                val errorMessage: String? = connectionResult.errorMessage
 
-            //Cadena de texto Query SQL
-            val query = "SELECT PchChe FROM TRPCH1 (NOLOCK) WHERE EmpCod = ? AND PchGru = 'R' AND PchAtr = 'TMCAJASIVE'"
+                if (connection != null) {
 
-            // Crear una instancia de PreparedStatement
-            val stmt = connect2.prepareStatement(query)
+                    //Cadena de texto Query SQL
+                    val query = "SELECT PchChe FROM TRPCH1 (NOLOCK) WHERE EmpCod = ? AND PchGru = 'R' AND PchAtr = 'TMCAJASIVE'"
 
-            // Establecer el parámetro en el PreparedStatement
-            stmt.setString(1, empCod)
+                    // Crear una instancia de PreparedStatement
+                    val stmt = connection.prepareStatement(query)
 
-            val rs : ResultSet = stmt.executeQuery()
+                    // Establecer el parámetro en el PreparedStatement
+                    stmt.setString(1, empCod)
 
-            //Ejecución
-            connect2.run {
+                    val rs : ResultSet = stmt.executeQuery()
 
-                //Cadena de texto vacia
-                var resultado = ""
+                    //Ejecución
+                    connection.run {
 
-                while(rs.next()) {
+                        var resultado1 = ""
 
-                    resultado = rs.getString(1)
+                        while(rs.next()) {
 
+                            resultado1 = rs.getString(1)
+
+                        }
+
+                        //cierra conexiones
+                        rs.close()
+                        stmt.close()
+                        close()
+
+                        resultado = (resultado1.isEmpty() && resultado1 != "N")
+
+                    }
+
+                } else {
+                    println("Error en la conexión: $errorMessage")
                 }
-
-                //cierra conexiones
-                rs.close()
-                stmt.close()
-                close()
-
-                return resultado != null && resultado != "N"
-
             }
+
+            return resultado
 
         }catch(e : Exception){
             println(e)

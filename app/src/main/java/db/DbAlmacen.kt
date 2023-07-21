@@ -4,7 +4,10 @@
 
 package db
 
+import android.os.Handler
+import android.os.Looper
 import data.Almacen
+import java.sql.Connection
 import java.sql.ResultSet
 
 class DbAlmacen {
@@ -26,41 +29,45 @@ class DbAlmacen {
 
         try{
 
-            val connect = DbConnect.connectDB()
-            val connect2 = connect.first
+            val handler = Handler(Looper.getMainLooper())
 
-            //si es nulo, finaliza
-            if(connect2 == null) {
-                println("Conexión nula")
-                return ""
-            }
+            DbConnect.connectDB(handler) { connectionResult ->
+                val connection: Connection? = connectionResult.connection
 
-            //Cadena de texto Query SQL
-            val query = "SELECT TOP(1) AlmCod FROM TREXI1 (NOLOCK) WHERE ArtCod = ? AND EmpCod = ?"
+                if (connection != null) {
 
-            // Crear una instancia de PreparedStatement
-            val stmt = connect2.prepareStatement(query)
+                    //Cadena de texto Query SQL
+                    val query = "SELECT TOP(1) AlmCod FROM TREXI1 (NOLOCK) WHERE ArtCod = ? AND EmpCod = ?"
 
-            // Establecer el parámetro en el PreparedStatement
-            stmt.setString(1, artCod)
-            stmt.setString(2, empCod)
+                    // Crear una instancia de PreparedStatement
+                    val stmt = connection.prepareStatement(query)
 
-            val rs : ResultSet = stmt.executeQuery()
+                    // Establecer el parámetro en el PreparedStatement
+                    stmt.setString(1, artCod)
+                    stmt.setString(2, empCod)
 
-            //Ejecucion
-            connect2.run {
+                    val rs : ResultSet = stmt.executeQuery()
 
-                //Bucle para recorrer la tabla SQL
-                while(rs.next()){
-                    resultado = rs.getString(1)
+                    //Ejecucion
+                    connection.run {
+
+                        //Bucle para recorrer la tabla SQL
+                        while(rs.next()){
+                            resultado = rs.getString(1)
+                        }
+
+                        //cierra conexiones
+                        rs.close()
+                        stmt.close()
+                        close()
+
+                    }
+
+                } else {
+                    println("Conexión nula")
                 }
 
-                //cierra conexiones
-                rs.close()
-                stmt.close()
-                close()
             }
-
         }catch(e : Exception){
             println(e)
         }
@@ -81,45 +88,49 @@ class DbAlmacen {
 
         try{
 
-            val connect = DbConnect.connectDB()
-            val connect2 = connect.first
+            val handler = Handler(Looper.getMainLooper())
 
-            //si es nulo, finaliza
-            if(connect2 == null) {
-                println("Conexión nula")
-                return lista.toList()
-            }
+            DbConnect.connectDB(handler) { connectionResult ->
+                val connection: Connection? = connectionResult.connection
+                val errorMessage: String? = connectionResult.errorMessage
 
-            //Cadena de texto Query SQL
-            val query = "SELECT T1.SedAlmCodS, T2.AlmDes FROM TRSED2 T1 (NOLOCK) INNER JOIN TRALM T2 ON T1.SedAlmCodS=T2.AlmCod WHERE T1.EmpCod = ?"
+                if (connection != null) {
 
-            // Crear una instancia de PreparedStatement
-            val stmt = connect2.prepareStatement(query)
+                    //Cadena de texto Query SQL
+                    val query = "SELECT T1.SedAlmCodS, T2.AlmDes FROM TRSED2 T1 (NOLOCK) INNER JOIN TRALM T2 ON T1.SedAlmCodS=T2.AlmCod WHERE T1.EmpCod = ?"
 
-            // Establecer el parámetro en el PreparedStatement
-            stmt.setString(1, empCod)
+                    // Crear una instancia de PreparedStatement
+                    val stmt = connection.prepareStatement(query)
 
-            val rs : ResultSet = stmt.executeQuery()
+                    // Establecer el parámetro en el PreparedStatement
+                    stmt.setString(1, empCod)
 
-            //Ejecucion
-            connect2.run {
+                    val rs : ResultSet = stmt.executeQuery()
 
-                //Bucle para recorrer la tabla SQL
-                while(rs.next()){
+                    //Ejecucion
+                    connection.run {
 
-                    val almacen = Almacen(
-                        rs.getString(1),
-                        rs.getString(2)
-                    )
-                    //Añade a la lista
-                    lista.add(almacen)
+                        //Bucle para recorrer la tabla SQL
+                        while(rs.next()){
 
+                            val almacen = Almacen(
+                                rs.getString(1),
+                                rs.getString(2)
+                            )
+                            //Añade a la lista
+                            lista.add(almacen)
+
+                        }
+
+                        //cierra conexiones
+                        rs.close()
+                        stmt.close()
+                        close()
+                    }
+
+                } else {
+                    println("Error en la conexión: $errorMessage")
                 }
-
-                //cierra conexiones
-                rs.close()
-                stmt.close()
-                close()
             }
 
         }catch(e : Exception){

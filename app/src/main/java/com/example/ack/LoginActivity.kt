@@ -7,6 +7,7 @@ package com.example.ack
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -21,6 +22,7 @@ import db.DbPassword
 import db.DbValues
 import kotlinx.coroutines.*
 import utilidades.Conectividad
+import java.sql.Connection
 
 class LoginActivity : AppCompatActivity() {
 
@@ -37,7 +39,7 @@ class LoginActivity : AppCompatActivity() {
         //Llama a la función SharedPreferencesBD()
         sharedPreferencesBD()
 
-        //comprobarConexion()
+        comprobarConexion()
 
         binding.buttonAcceder.setOnClickListener {
 
@@ -105,22 +107,66 @@ class LoginActivity : AppCompatActivity() {
                 }
 
                 //Llama a la función updateCompanies, para actualizar la lista de Empresas
-                updateCompanies()
+                //updateCompanies()
+
+                // Crear un Handler para manejar los resultados en el hilo principal
+                val handler = Handler(mainLooper)
+
+                // Ejecutar la conexión a la base de datos en un hilo secundario
+                Thread {
+                    DbConnect.connectDB(handler) { connectionResult ->
+                        val connection: Connection? = connectionResult.connection
+                        val errorMessage: String? = connectionResult.errorMessage
+
+                        if (connection != null) {
+
+                            try {
+                                val username = binding.username.text.toString()
+                                val dbEmpresas = DbEmpresas()
+                                val lista = dbEmpresas.getCompanies(username)
+                                setupSpinner(lista)
+
+                            }catch (e : Exception){
+                                println(e.message)
+                                setupSpinner(ArrayList())
+
+                            }
+
+                        } else {
+                            println("Error en la conexión: $errorMessage")
+                            mostrarToast("Error en la conexión: $errorMessage")
+
+                        }
+                    }
+                }.start()
+
             }
         })
 
     } //Fin onCreate
 
+    private fun mostrarToast(message : String){
+        Toast.makeText(this,message, Toast.LENGTH_LONG).show()
+    }
+
     private fun comprobarConexion(){
 
-        val conexion = DbConnect.connectDB()
+        // Crear un Handler para manejar los resultados en el hilo principal
+        val handler = Handler(mainLooper)
 
-        if(conexion.first == null){
-            println(conexion.second)
-            Toast.makeText(this, conexion.second, Toast.LENGTH_LONG).show()
-        }else{
-            Toast.makeText(this, "Conexión a la base de datos satisfactoria", Toast.LENGTH_LONG).show()
-        }
+        // Ejecutar la conexión a la base de datos en un hilo secundario
+        Thread {
+            DbConnect.connectDB(handler) { connectionResult ->
+                val connection: Connection? = connectionResult.connection
+                val errorMessage: String? = connectionResult.errorMessage
+
+                if (connection != null) {
+                    println("Conexión exitosa a la base de datos")
+                } else {
+                    println("Error en la conexión: $errorMessage")
+                }
+            }
+        }.start()
 
     }
 

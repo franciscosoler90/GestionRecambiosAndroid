@@ -4,13 +4,18 @@
 
 package db
 
+import android.os.Handler
+import android.os.Looper
 import utilidades.EncryptTool
+import java.sql.Connection
 import java.sql.ResultSet
 
 @Suppress("SameReturnValue")
 class DbPassword {
 
     fun getPassword(username : String, password : String) : Boolean{
+
+        var resultado = false
 
         //Si el nombre de usuario está vacio
         if (username.isEmpty()) {
@@ -19,51 +24,56 @@ class DbPassword {
 
         try{
 
-            val connect = DbConnect.connectDB()
-            val connect2 = connect.first
+            val handler = Handler(Looper.getMainLooper())
 
-            //si es nulo, finaliza
-            if(connect2 == null) {
-                println("Conexión nula")
-                return false
-            }
+            DbConnect.connectDB(handler) { connectionResult ->
+                val connection: Connection? = connectionResult.connection
+                val errorMessage: String? = connectionResult.errorMessage
 
-            //Cadena de texto Query SQL
-            val query =
-                "SELECT UsuPas FROM TRUSU (NOLOCK) WHERE UsuCod = ?"
+                if (connection != null) {
 
-            // Crear una instancia de PreparedStatement
-            val stmt = connect2.prepareStatement(query)
+                    //Cadena de texto Query SQL
+                    val query = "SELECT UsuPas FROM TRUSU (NOLOCK) WHERE UsuCod = ?"
 
-            // Establecer el parámetro en el PreparedStatement
-            stmt.setString(1, username)
+                    // Crear una instancia de PreparedStatement
+                    val stmt = connection.prepareStatement(query)
 
-            val rs : ResultSet = stmt.executeQuery()
+                    // Establecer el parámetro en el PreparedStatement
+                    stmt.setString(1, username)
 
-            //Ejecución
-            connect2.run {
+                    val rs : ResultSet = stmt.executeQuery()
 
-                //Cadena de texto vacia
-                var pass = ""
+                    //Ejecución
+                    connection.run {
 
-                //Bucle para recorrer la tabla SQL
-                while(rs.next()) {
-                    //obtiene el primer resultado
-                    pass = rs.getString(1)
+                        //Cadena de texto vacia
+                        var pass = ""
+
+                        //Bucle para recorrer la tabla SQL
+                        while(rs.next()) {
+                            //obtiene el primer resultado
+                            pass = rs.getString(1)
+                        }
+
+                        //cierra conexiones
+                        rs.close()
+                        stmt.close()
+                        close()
+
+                        //Encriptacion de contraseña
+                        val encryptTool = EncryptTool()
+                        val password2 = encryptTool.encryptString(true,password)
+
+                        resultado = password2 == pass
+
+                    }
+
+                } else {
+                    println("Error en la conexión: $errorMessage")
                 }
-
-                //cierra conexiones
-                rs.close()
-                stmt.close()
-                close()
-
-                //Encriptacion de contraseña
-                val encryptTool = EncryptTool()
-                val password2 = encryptTool.encryptString(true,password)
-
-                return password2 == pass
-
             }
+
+            return resultado
 
         }catch(e : Exception){
             println(e)

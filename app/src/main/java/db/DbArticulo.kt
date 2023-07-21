@@ -4,6 +4,9 @@
 
 package db
 
+import android.os.Handler
+import android.os.Looper
+import java.sql.Connection
 import java.sql.ResultSet
 
 class DbArticulo {
@@ -25,39 +28,43 @@ class DbArticulo {
 
         try{
 
-            val connect = DbConnect.connectDB()
-            val connect2 = connect.first
+            val handler = Handler(Looper.getMainLooper())
 
-            //si es nulo, finaliza
-            if(connect2 == null) {
-                println("Conexión nula")
-                return ""
-            }
+            DbConnect.connectDB(handler) { connectionResult ->
+                val connection: Connection? = connectionResult.connection
+                val errorMessage: String? = connectionResult.errorMessage
 
-            //Cadena de texto Query SQL
-            val query = "SELECT ArtDes FROM TRART (NOLOCK) WHERE ArtCod = ? AND EmpCod = ?"
+                if (connection != null) {
 
-            // Crear una instancia de PreparedStatement
-            val stmt = connect2.prepareStatement(query)
+                    //Cadena de texto Query SQL
+                    val query = "SELECT ArtDes FROM TRART (NOLOCK) WHERE ArtCod = ? AND EmpCod = ?"
 
-            // Establecer el parámetro en el PreparedStatement
-            stmt.setString(1, code)
-            stmt.setString(2, empCod)
+                    // Crear una instancia de PreparedStatement
+                    val stmt = connection.prepareStatement(query)
 
-            val rs : ResultSet = stmt.executeQuery()
+                    // Establecer el parámetro en el PreparedStatement
+                    stmt.setString(1, code)
+                    stmt.setString(2, empCod)
 
-            //Ejecucion
-            connect2.run {
+                    val rs : ResultSet = stmt.executeQuery()
 
-                //Bucle para recorrer la tabla SQL
-                while(rs.next()){
-                    resultado = rs.getString(1)
+                    //Ejecucion
+                    connection.run {
+
+                        //Bucle para recorrer la tabla SQL
+                        while(rs.next()){
+                            resultado = rs.getString(1)
+                        }
+
+                        //cierra conexiones
+                        rs.close()
+                        stmt.close()
+                        close()
+                    }
+
+                } else {
+                    println("Error en la conexión: $errorMessage")
                 }
-
-                //cierra conexiones
-                rs.close()
-                stmt.close()
-                close()
             }
 
         }catch(e : Exception){
