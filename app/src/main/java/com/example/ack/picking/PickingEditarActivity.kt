@@ -51,7 +51,6 @@ class PickingEditarActivity : AppCompatActivity() {
 
         //SHARED PREFERENCES
         val sp = applicationContext.getSharedPreferences(Constant.myUserPrefs, MODE_PRIVATE)
-        val username = sp.getString(Constant.username, "")
 
         //Si pickingLineas no es nulo
         if(pickingLineas!=null){

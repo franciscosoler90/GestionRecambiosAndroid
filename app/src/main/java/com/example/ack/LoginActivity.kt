@@ -7,7 +7,6 @@ package com.example.ack
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -16,13 +15,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.ack.databinding.ActivityLoginActivityBinding
 import data.Constant
 import data.Empresa
-import db.DbConnect
 import db.DbEmpresas
 import db.DbPassword
 import db.DbValues
-import kotlinx.coroutines.*
 import utilidades.Conectividad
-import java.sql.Connection
 
 class LoginActivity : AppCompatActivity() {
 
@@ -38,8 +34,6 @@ class LoginActivity : AppCompatActivity() {
 
         //Llama a la función SharedPreferencesBD()
         sharedPreferencesBD()
-
-        comprobarConexion()
 
         binding.buttonAcceder.setOnClickListener {
 
@@ -64,30 +58,26 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            val db = DbPassword()
-            val passwordMatches = db.getPassword(username, password)
-
-            if (!passwordMatches) {
-                Toast.makeText(this,"Usuario o contraseña incorrectos",Toast.LENGTH_LONG).show()
-                return@setOnClickListener
-            }
-
             if (empresa == null) {
                 Toast.makeText(this,"Empresa no válida",Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
-            val sharedPref = applicationContext.getSharedPreferences(Constant.myUserPrefs, Context.MODE_PRIVATE)
+            val dbPassword = DbPassword()
 
-            with (sharedPref.edit()) {
-                putString(Constant.companyName, empresa.toString())
-                putString(Constant.companyId, empresa!!.id)
-                putString(Constant.username, username)
-                apply()
-            }
+            dbPassword.getPassword(username, password, object : DbPassword.OnPasswordReceivedListener {
+                override fun onPasswordReceived(passwordMatches: Boolean) {
+                    if (passwordMatches) {
+                        toMenu(username)
+                        println("Contraseña correcta. Iniciar sesión exitoso.")
+                    } else {
+                        println("Contraseña incorrecta. Iniciar sesión fallido.")
+                        mostrarToast("Contraseña incorrecta. Iniciar sesión fallido.")
+                        return
+                    }
+                }
+            })
 
-            val intent = Intent(this, MenuActivity::class.java)
-            startActivity(intent)
         }
 
         //Establece un TextWatcher en el campo username, que detecta cambios cuando se introduce texto
@@ -109,65 +99,48 @@ class LoginActivity : AppCompatActivity() {
                 //Llama a la función updateCompanies, para actualizar la lista de Empresas
                 //updateCompanies()
 
-                // Crear un Handler para manejar los resultados en el hilo principal
-                val handler = Handler(mainLooper)
+                val username = binding.username.text.toString()
 
-                // Ejecutar la conexión a la base de datos en un hilo secundario
-                Thread {
-                    DbConnect.connectDB(handler) { connectionResult ->
-                        val connection: Connection? = connectionResult.connection
-                        val errorMessage: String? = connectionResult.errorMessage
+                val dbEmpresas = DbEmpresas()
 
-                        if (connection != null) {
-
-                            try {
-                                val username = binding.username.text.toString()
-                                val dbEmpresas = DbEmpresas()
-                                val lista = dbEmpresas.getCompanies(username)
-                                setupSpinner(lista)
-
-                            }catch (e : Exception){
-                                println(e.message)
-                                setupSpinner(ArrayList())
-
-                            }
-
-                        } else {
-                            println("Error en la conexión: $errorMessage")
-                            mostrarToast("Error en la conexión: $errorMessage")
-
-                        }
+                dbEmpresas.getCompanies(username, object : DbEmpresas.OnCompaniesDataReceivedListener {
+                    override fun onCompaniesDataReceived(companies: List<Empresa>) {
+                        setupSpinner(companies)
                     }
-                }.start()
+
+                    override fun onError(errorMessage: String) {
+                        // Manejo de errores si es necesario
+                        println("Error: $errorMessage")
+                        mostrarToast("Error: $errorMessage")
+                        setupSpinner(ArrayList())
+                    }
+                })
 
             }
         })
 
     } //Fin onCreate
 
-    private fun mostrarToast(message : String){
-        Toast.makeText(this,message, Toast.LENGTH_LONG).show()
+
+    private fun toMenu(username: String){
+
+        val sharedPref = applicationContext.getSharedPreferences(Constant.myUserPrefs, Context.MODE_PRIVATE)
+
+        with (sharedPref.edit()) {
+            putString(Constant.companyName, empresa.toString())
+            putString(Constant.companyId, empresa!!.id)
+            putString(Constant.username, username)
+            apply()
+        }
+
+        val intent = Intent(this, MenuActivity::class.java)
+        startActivity(intent)
+
+
     }
 
-    private fun comprobarConexion(){
-
-        // Crear un Handler para manejar los resultados en el hilo principal
-        val handler = Handler(mainLooper)
-
-        // Ejecutar la conexión a la base de datos en un hilo secundario
-        Thread {
-            DbConnect.connectDB(handler) { connectionResult ->
-                val connection: Connection? = connectionResult.connection
-                val errorMessage: String? = connectionResult.errorMessage
-
-                if (connection != null) {
-                    println("Conexión exitosa a la base de datos")
-                } else {
-                    println("Error en la conexión: $errorMessage")
-                }
-            }
-        }.start()
-
+    private fun mostrarToast(message : String){
+        Toast.makeText(this,message, Toast.LENGTH_SHORT).show()
     }
 
     //Función que rellena el spinner con lista de opciones de empresas
@@ -194,24 +167,6 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    // Ejecuta secuencialmente
-    private fun updateCompanies() = runBlocking {
-        val empresas = async { getCompanies() }
-        setupSpinner(empresas.await())
-    }
-
-    // Ejecuta simultáneamente
-    private fun getCompanies() : List<Empresa> {
-        return try {
-            val username = binding.username.text.toString()
-            val dbEmpresas = DbEmpresas()
-            dbEmpresas.getCompanies(username)
-
-        }catch (e : Exception){
-            println(e.message)
-            ArrayList()
-        }
-    }
 
     //Función de sharedPreferencesBD en relación a la configuración de bases de datos
     private fun sharedPreferencesBD(){

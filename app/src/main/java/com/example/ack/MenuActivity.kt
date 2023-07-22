@@ -17,6 +17,7 @@ import com.example.ack.picking.PickingFilesActivity
 import data.Constant
 import db.DbUsuario
 import androidx.gridlayout.widget.GridLayout
+import data.Usuario
 
 class MenuActivity : AppCompatActivity() {
 
@@ -32,69 +33,79 @@ class MenuActivity : AppCompatActivity() {
         //TITULO
         this.title = getString(R.string.gestionRecambios)
 
-        //SHARED PREFERENCES
-        val sp = applicationContext.getSharedPreferences(Constant.myUserPrefs, MODE_PRIVATE)
-
         //Configura la barra de menú
         setSupportActionBar(binding.toolbarMenu)
 
-        val db = DbUsuario()
-        val usuario = sp.getString(Constant.username,"")?.let { db.getUsuario(it) }
-        val iveco = sp.getString(Constant.companyId,"")?.let { db.getIVECO(it) }
+        //SHARED PREFERENCES
+        val sp = applicationContext.getSharedPreferences(Constant.myUserPrefs, MODE_PRIVATE)
 
-        //Ocultar si no IVECO
-        if(iveco == false){
+        val username = sp.getString(Constant.username, "").toString()
+        val empCod = sp.getString(Constant.companyId,"").toString()
 
-            val layoutParams = binding.cardMercancia.layoutParams as GridLayout.LayoutParams
+        val dbUsuario = DbUsuario()
 
-            layoutParams.rowSpec = GridLayout.spec(1)
-            layoutParams.columnSpec = GridLayout.spec(0)
+        dbUsuario.getUsuario(username, object : DbUsuario.OnUsuarioReceivedListener {
+            override fun onUsuarioReceived(usuario: Usuario?) {
+                if (usuario != null) {
+                    //Subtitulo en la action bar
+                    supportActionBar?.subtitle = usuario.toString()
+                }
+            }
+        })
 
-            // Actualizar las propiedades de las columnas
-            layoutParams.width = GridLayout.LayoutParams.WRAP_CONTENT
-            layoutParams.height = GridLayout.LayoutParams.WRAP_CONTENT
-            layoutParams.setMargins(4.dpToPx(), 4.dpToPx(), 4.dpToPx(), 4.dpToPx())
-            layoutParams.columnSpec = GridLayout.spec(0, 1f)
+        dbUsuario.getIVECO(empCod, object : DbUsuario.OnIVECOReceivedListener {
 
-            // Solicitar una actualización del diseño
-            binding.cardMercancia.requestLayout()
+            override fun onIVECOReceived(ivecoExists: Boolean) {
+                if(!ivecoExists){
 
-            val layoutParams2 = binding.cardReubicaciones.layoutParams as GridLayout.LayoutParams
+                    val layoutParams = binding.cardMercancia.layoutParams as GridLayout.LayoutParams
 
-            layoutParams2.rowSpec = GridLayout.spec(1)
-            layoutParams2.columnSpec = GridLayout.spec(1)
+                    layoutParams.rowSpec = GridLayout.spec(1)
+                    layoutParams.columnSpec = GridLayout.spec(0)
 
-            // Actualizar las propiedades de las columnas
-            layoutParams2.width = GridLayout.LayoutParams.WRAP_CONTENT
-            layoutParams2.height = GridLayout.LayoutParams.WRAP_CONTENT
-            layoutParams2.setMargins(4.dpToPx(), 4.dpToPx(), 4.dpToPx(), 4.dpToPx())
-            layoutParams2.columnSpec = GridLayout.spec(1, 1f)
+                    // Actualizar las propiedades de las columnas
+                    layoutParams.width = GridLayout.LayoutParams.WRAP_CONTENT
+                    layoutParams.height = GridLayout.LayoutParams.WRAP_CONTENT
+                    layoutParams.setMargins(4.dpToPx(), 4.dpToPx(), 4.dpToPx(), 4.dpToPx())
+                    layoutParams.columnSpec = GridLayout.spec(0, 1f)
 
-            // Solicitar una actualización del diseño
-            binding.cardReubicaciones.requestLayout()
+                    // Solicitar una actualización del diseño
+                    binding.cardMercancia.requestLayout()
 
-            val layoutParams3 = binding.cardPendiente2.layoutParams as GridLayout.LayoutParams
+                    val layoutParams2 = binding.cardReubicaciones.layoutParams as GridLayout.LayoutParams
 
-            layoutParams3.rowSpec = GridLayout.spec(2)
-            layoutParams3.columnSpec = GridLayout.spec(0)
+                    layoutParams2.rowSpec = GridLayout.spec(1)
+                    layoutParams2.columnSpec = GridLayout.spec(1)
 
-            // Actualizar las propiedades de las columnas
-            layoutParams3.width = GridLayout.LayoutParams.WRAP_CONTENT
-            layoutParams3.height = GridLayout.LayoutParams.WRAP_CONTENT
-            layoutParams3.setMargins(4.dpToPx(), 4.dpToPx(), 4.dpToPx(), 4.dpToPx())
-            layoutParams3.columnSpec = GridLayout.spec(0, 1f)
+                    // Actualizar las propiedades de las columnas
+                    layoutParams2.width = GridLayout.LayoutParams.WRAP_CONTENT
+                    layoutParams2.height = GridLayout.LayoutParams.WRAP_CONTENT
+                    layoutParams2.setMargins(4.dpToPx(), 4.dpToPx(), 4.dpToPx(), 4.dpToPx())
+                    layoutParams2.columnSpec = GridLayout.spec(1, 1f)
 
-            // Solicitar una actualización del diseño
-            binding.cardPendiente2.requestLayout()
+                    // Solicitar una actualización del diseño
+                    binding.cardReubicaciones.requestLayout()
 
-            binding.cardIveco.visibility = View.GONE
-        }
+                    val layoutParams3 = binding.cardPendiente2.layoutParams as GridLayout.LayoutParams
 
-        //Si el usuario no es nulo
-        if(usuario != null){
-            //Subtitulo en la action bar
-            supportActionBar?.subtitle = usuario.toString()
-        }
+                    layoutParams3.rowSpec = GridLayout.spec(2)
+                    layoutParams3.columnSpec = GridLayout.spec(0)
+
+                    // Actualizar las propiedades de las columnas
+                    layoutParams3.width = GridLayout.LayoutParams.WRAP_CONTENT
+                    layoutParams3.height = GridLayout.LayoutParams.WRAP_CONTENT
+                    layoutParams3.setMargins(4.dpToPx(), 4.dpToPx(), 4.dpToPx(), 4.dpToPx())
+                    layoutParams3.columnSpec = GridLayout.spec(0, 1f)
+
+                    // Solicitar una actualización del diseño
+                    binding.cardPendiente2.requestLayout()
+
+                    binding.cardIveco.visibility = View.GONE
+
+                }
+            }
+
+        })
 
         //Salir de la aplicación
         binding.btnExit.setOnClickListener {

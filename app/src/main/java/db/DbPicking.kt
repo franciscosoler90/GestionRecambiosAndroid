@@ -4,11 +4,8 @@
 
 package db
 
-import android.os.Handler
-import android.os.Looper
 import data.PickingCabecera
 import data.PickingLineas
-import java.sql.Connection
 import java.sql.ResultSet
 
 class DbPicking {
@@ -24,58 +21,54 @@ class DbPicking {
 
         try{
 
-            val handler = Handler(Looper.getMainLooper())
+            val connect = DbConnect.connectDB()
+            val connect2 = connect.first
 
-            DbConnect.connectDB(handler) { connectionResult ->
-                val connection: Connection? = connectionResult.connection
-                val errorMessage: String? = connectionResult.errorMessage
+            //si es nulo, finaliza
+            if(connect2 == null) {
+                println("Conexión nula")
+                return lista.toList()
+            }
 
-                if (connection != null) {
+            //Cadena de texto Query SQL
+            val query = DbSentences.sqlPicking
 
-                    //Cadena de texto Query SQL
-                    val query = "SELECT * FROM TRTMPIC (NOLOCK)"
+            // Crear una instancia de PreparedStatement
+            val stmt = connect2.prepareStatement(query)
 
-                    // Crear una instancia de PreparedStatement
-                    val stmt = connection.prepareStatement(query)
+            val rs : ResultSet = stmt.executeQuery()
 
-                    val rs : ResultSet = stmt.executeQuery()
+            var linea = 0
 
-                    var linea = 0
+            //Ejecucion
+            connect.run {
 
-                    //Ejecucion
-                    connection.run {
+                //Bucle para recorrer la tabla SQL
+                while(rs.next()){
 
-                        //Bucle para recorrer la tabla SQL
-                        while(rs.next()){
+                    val lineas = PickingCabecera(
+                        rs.getString(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getString(7),
+                        rs.getString(8),
+                        rs.getString(9),
+                        linea
+                    )
+                    //Añade a la lista
+                    lista.add(lineas)
 
-                            val lineas = PickingCabecera(
-                                rs.getString(1),
-                                rs.getString(2),
-                                rs.getString(3),
-                                rs.getString(4),
-                                rs.getString(5),
-                                rs.getString(6),
-                                rs.getString(7),
-                                rs.getString(8),
-                                rs.getString(9),
-                                linea
-                            )
-                            //Añade a la lista
-                            lista.add(lineas)
-
-                            linea++
-                        }
-
-                        //cierra conexiones
-                        rs.close()
-                        stmt.close()
-                        connection.close()
-
-                    }
-
-                } else {
-                    println("Error en la conexión: $errorMessage")
+                    linea++
                 }
+
+                //cierra conexiones
+                rs.close()
+                stmt.close()
+                connect2.close()
+
             }
 
         }catch(e : Exception){
@@ -98,63 +91,60 @@ class DbPicking {
 
         try{
 
-            val handler = Handler(Looper.getMainLooper())
+            val connect = DbConnect.connectDB()
+            val connect2 = connect.first
 
-            DbConnect.connectDB(handler) { connectionResult ->
-                val connection: Connection? = connectionResult.connection
-                val errorMessage: String? = connectionResult.errorMessage
+            //si es nulo, finaliza
+            if(connect2 == null) {
+                println("Conexión nula")
+                return lista.toList()
+            }
 
-                if (connection != null) {
+            //Cadena de texto Query SQL
+            val query = DbSentences.sqlPickingLineas
 
-                    //Cadena de texto Query SQL
-                    val query = "SELECT * FROM TRTMPICL (NOLOCK) WHERE TMPNro = ?"
+            // Crear una instancia de PreparedStatement
+            val stmt = connect2.prepareStatement(query)
 
-                    // Crear una instancia de PreparedStatement
-                    val stmt = connection.prepareStatement(query)
+            // Establecer el parámetro en el PreparedStatement
+            stmt.setString(1, id)
 
-                    // Establecer el parámetro en el PreparedStatement
-                    stmt.setString(1, id)
+            val rs : ResultSet = stmt.executeQuery()
 
-                    val rs : ResultSet = stmt.executeQuery()
+            var linea = 0
 
-                    var linea = 0
+            //Ejecucion
+            connect.run {
 
-                    //Ejecucion
-                    connection.run {
+                //Bucle para recorrer la tabla SQL
+                while(rs.next()){
 
-                        //Bucle para recorrer la tabla SQL
-                        while (rs.next()) {
+                    val lineas = PickingLineas(
+                        rs.getString(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getInt(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getString(7),
+                        rs.getString(8),
+                        rs.getString(9),
+                        rs.getString(10),
+                        rs.getString(11),
+                        linea
+                    )
+                    //Añade a la lista
+                    lista.add(lineas)
 
-                            val lineas = PickingLineas(
-                                rs.getString(1),
-                                rs.getString(2),
-                                rs.getString(3),
-                                rs.getInt(4),
-                                rs.getString(5),
-                                rs.getString(6),
-                                rs.getString(7),
-                                rs.getString(8),
-                                rs.getString(9),
-                                rs.getString(10),
-                                rs.getString(11),
-                                linea
-                            )
-                            //Añade a la lista
-                            lista.add(lineas)
+                    linea++
 
-                            linea++
-
-                        }
-
-                        //cierra conexiones
-                        rs.close()
-                        stmt.close()
-                        connection.close()
-                    }
-
-                } else {
-                    println("Error en la conexión: $errorMessage")
                 }
+
+                //cierra conexiones
+                rs.close()
+                stmt.close()
+                connect2.close()
+
             }
 
         }catch(e : Exception){
@@ -179,42 +169,36 @@ class DbPicking {
 
         try{
 
-            val handler = Handler(Looper.getMainLooper())
+            val connect = DbConnect.connectDB()
+            val connect2 = connect.first
 
-            DbConnect.connectDB(handler) { connectionResult ->
-                val connection: Connection? = connectionResult.connection
-                val errorMessage: String? = connectionResult.errorMessage
+            //si es nulo, finaliza
+            if(connect2 == null) {
+                println("Conexión nula")
+                return
+            }
 
-                if (connection != null) {
+            //Cadena de texto Query SQL
+            val query = DbSentences.sqlPickingUpdateUnidades
 
-                    //Cadena de texto Query SQL
-                    val query = "UPDATE TRTMPICL\n" +
-                            "SET TMPArtUnRe = ?\n" +
-                            "WHERE TMPNro = ? AND TMPArtLin = ?"
+            // Crear una instancia de PreparedStatement
+            val stmt = connect2.prepareStatement(query)
 
-                    // Crear una instancia de PreparedStatement
-                    val stmt = connection.prepareStatement(query)
+            // Establecer los parámetros en el PreparedStatement
+            unidades.let { stmt.setFloat(1, it) }
+            stmt.setString(2, id)
+            stmt.setInt(3, linea)
 
-                    // Establecer los parámetros en el PreparedStatement
-                    unidades.let { stmt.setFloat(1, it) }
-                    stmt.setString(2, id)
-                    stmt.setInt(3, linea)
+            // Ejecutar la actualizacion
+            stmt.executeUpdate()
 
-                    // Ejecutar la actualizacion
-                    stmt.executeUpdate()
+            //Ejecucion
+            connect2.run {
 
-                    //Ejecucion
-                    connection.run {
+                //cierra conexiones
+                stmt.close()
+                close()
 
-                        //cierra conexiones
-                        stmt.close()
-                        close()
-
-                    }
-
-                } else {
-                    println("Error en la conexión: $errorMessage")
-                }
             }
 
         }catch(e : Exception){
@@ -237,38 +221,32 @@ class DbPicking {
 
         try{
 
-            val handler = Handler(Looper.getMainLooper())
+            val connect = DbConnect.connectDB()
+            val connect2 = connect.first
 
-            DbConnect.connectDB(handler) { connectionResult ->
-                val connection: Connection? = connectionResult.connection
-                val errorMessage: String? = connectionResult.errorMessage
-
-                if (connection != null) {
-
-                    //Cadena de texto Query SQL
-                    val query = "UPDATE TRTMPICL\n" +
-                            "SET TMPLinEst = ?\n" +
-                            "WHERE TMPNro = ? AND TMPArtLin = ?"
-
-                    // Crear una instancia de PreparedStatement
-                    val stmt = connection.prepareStatement(query)
-
-                    // Establecer los parámetros en el PreparedStatement
-                    stmt.setInt(1, estado)
-                    stmt.setString(2, id)
-                    stmt.setInt(3, linea)
-
-                    // Ejecutar la actualizacion
-                    stmt.executeUpdate()
-
-                    //cierra conexiones
-                    stmt.close()
-                    connection.close()
-
-                } else {
-                    println("Error en la conexión: $errorMessage")
-                }
+            //si es nulo, finaliza
+            if(connect2 == null) {
+                println("Conexión nula")
+                return
             }
+
+            //Cadena de texto Query SQL
+            val query = DbSentences.sqlPickingUpdateEstado
+
+            // Crear una instancia de PreparedStatement
+            val stmt = connect2.prepareStatement(query)
+
+            // Establecer los parámetros en el PreparedStatement
+            stmt.setInt(1, estado)
+            stmt.setString(2, id)
+            stmt.setInt(3, linea)
+
+            // Ejecutar la actualizacion
+            stmt.executeUpdate()
+
+            //cierra conexiones
+            stmt.close()
+            connect2.close()
 
         }catch(e : Exception){
             println(e)
@@ -285,37 +263,31 @@ class DbPicking {
 
         try{
 
-            val handler = Handler(Looper.getMainLooper())
+            val connect = DbConnect.connectDB()
+            val connect2 = connect.first
 
-            DbConnect.connectDB(handler) { connectionResult ->
-                val connection: Connection? = connectionResult.connection
-                val errorMessage: String? = connectionResult.errorMessage
-
-                if (connection != null) {
-
-                    //Cadena de texto Query SQL
-                    val query = "UPDATE TRTMPIC\n" +
-                            "SET TMPEst = ?\n" +
-                            "WHERE TMPNro = ?"
-
-                    // Crear una instancia de PreparedStatement
-                    val stmt = connection.prepareStatement(query)
-
-                    // Establecer los parámetros en el PreparedStatement
-                    stmt.setInt(1, estado)
-                    stmt.setString(2, id)
-
-                    // Ejecutar la actualizacion
-                    stmt.executeUpdate()
-
-                    //cierra conexiones
-                    stmt.close()
-                    connection.close()
-
-                } else {
-                    println("Error en la conexión: $errorMessage")
-                }
+            //si es nulo, finaliza
+            if(connect2 == null) {
+                println("Conexión nula")
+                return
             }
+
+            //Cadena de texto Query SQL
+            val query = DbSentences.sqlPickingUpdate
+
+            // Crear una instancia de PreparedStatement
+            val stmt = connect2.prepareStatement(query)
+
+            // Establecer los parámetros en el PreparedStatement
+            stmt.setInt(1, estado)
+            stmt.setString(2, id)
+
+            // Ejecutar la actualizacion
+            stmt.executeUpdate()
+
+            //cierra conexiones
+            stmt.close()
+            connect2.close()
 
         }catch(e : Exception){
             println(e)
@@ -324,8 +296,6 @@ class DbPicking {
     }
 
     fun getLinea(id : String?, linea: Int) : PickingLineas? {
-
-        var resultado : PickingLineas? = null
 
         //Comprueba si está vacio o es nulo
         if (id.isNullOrEmpty()) {
@@ -339,67 +309,63 @@ class DbPicking {
 
         try{
 
-            val handler = Handler(Looper.getMainLooper())
+            val connect = DbConnect.connectDB()
+            val connect2 = connect.first
 
-            DbConnect.connectDB(handler) { connectionResult ->
-                val connection: Connection? = connectionResult.connection
-                val errorMessage: String? = connectionResult.errorMessage
+            //si es nulo, finaliza
+            if(connect2 == null) {
+                println("Conexión nula")
+                return null
+            }
 
-                if (connection != null) {
+            //Cadena de texto Query SQL
+            val query = DbSentences.sqlPickingLinea
 
-                    //Cadena de texto Query SQL
-                    val query = "SELECT * FROM TRTMPICL (NOLOCK) WHERE TMPNro = ? AND TMPArtLin = ?"
+            // Crear una instancia de PreparedStatement
+            val stmt = connect2.prepareStatement(query)
 
-                    // Crear una instancia de PreparedStatement
-                    val stmt = connection.prepareStatement(query)
+            // Establecer el parámetro en el PreparedStatement
+            stmt.setString(1, id)
+            stmt.setInt(2, linea)
 
-                    // Establecer el parámetro en el PreparedStatement
-                    stmt.setString(1, id)
-                    stmt.setInt(2, linea)
+            val rs : ResultSet = stmt.executeQuery()
 
-                    val rs : ResultSet = stmt.executeQuery()
+            //Ejecucion
+            connect2.run {
 
-                    //Ejecucion
-                    connection.run {
+                //Bucle para recorrer la tabla SQL
+                while(rs.next()){
 
-                        //Bucle para recorrer la tabla SQL
-                        while(rs.next()){
-
-                            resultado = PickingLineas(
-                                rs.getString(1),
-                                rs.getString(2),
-                                rs.getString(3),
-                                rs.getInt(4),
-                                rs.getString(5),
-                                rs.getString(6),
-                                rs.getString(7),
-                                rs.getString(8),
-                                rs.getString(9),
-                                rs.getString(10),
-                                rs.getString(11),
-                                0
-                            )
-
-                            //cierra conexiones
-                            rs.close()
-                            stmt.close()
-                            close()
-
-                        }
-
-                    }
+                    val resultado = PickingLineas(
+                        rs.getString(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getInt(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getString(7),
+                        rs.getString(8),
+                        rs.getString(9),
+                        rs.getString(10),
+                        rs.getString(11),
+                        0
+                    )
 
                     //cierra conexiones
                     rs.close()
                     stmt.close()
-                    connection.close()
+                    close()
 
-                } else {
-                    println("Error en la conexión: $errorMessage")
+                    return resultado
+
                 }
+
             }
 
-            return resultado
+            //cierra conexiones
+            rs.close()
+            stmt.close()
+            connect2.close()
 
         }catch(e : Exception){
             println(e)

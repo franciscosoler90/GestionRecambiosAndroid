@@ -4,11 +4,8 @@
 
 package db
 
-import android.os.Handler
-import android.os.Looper
 import data.InventarioCabecera
 import data.InventarioLineas
-import java.sql.Connection
 import java.sql.ResultSet
 
 class DbInventory {
@@ -24,44 +21,40 @@ class DbInventory {
 
         try{
 
-            val handler = Handler(Looper.getMainLooper())
+            val connect = DbConnect.connectDB()
+            val connect2 = connect.first
 
-            DbConnect.connectDB(handler) { connectionResult ->
-                val connection: Connection? = connectionResult.connection
-                val errorMessage: String? = connectionResult.errorMessage
+            //si es nulo, finaliza
+            if(connect2 == null) {
+                println("Conexión nula")
+                return lista.toList()
+            }
 
-                if (connection != null) {
+            //Cadena de texto Query SQL, sacar las lineas no estan importadas con el estado menor que 3
+            val query = DbSentences.sqlInventario
 
-                    //Cadena de texto Query SQL, sacar las lineas no estan importadas con el estado menor que 3
-                    val query = "SELECT * FROM TRTMINV (NOLOCK) WHERE TMIEst < 3"
+            // Crear una instancia de PreparedStatement
+            val stmt = connect2.prepareStatement(query)
 
-                    // Crear una instancia de PreparedStatement
-                    val stmt = connection.prepareStatement(query)
+            val rs : ResultSet = stmt.executeQuery()
 
-                    val rs : ResultSet = stmt.executeQuery()
+            //Ejecucion
+            connect2.run {
 
-                    //Ejecucion
-                    connection.run {
+                //Bucle para recorrer la tabla SQL
+                while(rs.next()){
 
-                        //Bucle para recorrer la tabla SQL
-                        while(rs.next()){
+                    val inventarioCabecera = InventarioCabecera(rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7),rs.getString(8))
 
-                            val inventarioCabecera = InventarioCabecera(rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4),rs.getString(5),rs.getString(6),rs.getString(7),rs.getString(8))
-
-                            //Añade a la lista
-                            lista.add(inventarioCabecera)
-                        }
-
-                        //cierra conexiones
-                        rs.close()
-                        stmt.close()
-                        close()
-
-                    }
-
-                } else {
-                    println("Error en la conexión: $errorMessage")
+                    //Añade a la lista
+                    lista.add(inventarioCabecera)
                 }
+
+                //cierra conexiones
+                rs.close()
+                stmt.close()
+                close()
+
             }
 
         }catch(e : Exception){
@@ -83,69 +76,63 @@ class DbInventory {
 
         try{
 
-            val handler = Handler(Looper.getMainLooper())
+            val connect = DbConnect.connectDB()
+            val connect2 = connect.first
 
-            DbConnect.connectDB(handler) { connectionResult ->
-                val connection: Connection? = connectionResult.connection
-                val errorMessage: String? = connectionResult.errorMessage
-
-                if (connection != null) {
-
-                    //Cadena de texto Query SQL
-                    val query = "SELECT * FROM TRTMINVL (NOLOCK) WHERE TMINro = ? AND EmpCod = ? AND TMISer = ? AND AlmCod = ? AND TMILinEst < 3 ORDER BY TMILinEst"
-
-                    // Crear una instancia de PreparedStatement
-                    val stmt = connection.prepareStatement(query)
-
-                    // Establecer el parámetro en el PreparedStatement
-                    stmt.setString(1, id)
-                    stmt.setString(2, empCod)
-                    stmt.setString(3, tmiSer)
-                    stmt.setString(4, almCod)
-
-                    val rs : ResultSet = stmt.executeQuery()
-
-                    //Ejecucion
-                    connection.run {
-
-                        var linea = 1
-
-                        //Bucle para recorrer la tabla SQL
-                        while(rs.next()){
-
-                            val lineas = InventarioLineas(
-                                rs.getString(1),
-                                rs.getString(2),
-                                rs.getString(3),
-                                rs.getString(4),
-                                rs.getString(5),
-                                rs.getString(6),
-                                rs.getString(7),
-                                rs.getString(8),
-                                rs.getString(9),
-                                rs.getString(10),
-                                rs.getString(11),
-                                linea
-                            )
-                            //Añade a la lista
-                            lista.add(lineas)
-
-                            linea++
-                        }
-
-                        //cierra conexiones
-                        rs.close()
-                        stmt.close()
-                        close()
-
-                    }
-
-                } else {
-                    println("Error en la conexión: $errorMessage")
-                }
+            //si es nulo, finaliza
+            if(connect2 == null) {
+                println("Conexión nula")
+                return lista.toList()
             }
 
+            //Cadena de texto Query SQL
+            val query = DbSentences.sqlInventarioLineas
 
+            // Crear una instancia de PreparedStatement
+            val stmt = connect2.prepareStatement(query)
+
+            // Establecer el parámetro en el PreparedStatement
+            stmt.setString(1, id)
+            stmt.setString(2, empCod)
+            stmt.setString(3, tmiSer)
+            stmt.setString(4, almCod)
+
+            val rs : ResultSet = stmt.executeQuery()
+
+            //Ejecucion
+            connect2.run {
+
+                var linea = 1
+
+                //Bucle para recorrer la tabla SQL
+                while(rs.next()){
+
+                    val lineas = InventarioLineas(
+                        rs.getString(1),
+                        rs.getString(2),
+                        rs.getString(3),
+                        rs.getString(4),
+                        rs.getString(5),
+                        rs.getString(6),
+                        rs.getString(7),
+                        rs.getString(8),
+                        rs.getString(9),
+                        rs.getString(10),
+                        rs.getString(11),
+                        linea
+                    )
+                    //Añade a la lista
+                    lista.add(lineas)
+
+                    linea++
+                }
+
+                //cierra conexiones
+                rs.close()
+                stmt.close()
+                close()
+
+            }
 
         }catch(e : Exception){
             println(e)
@@ -169,43 +156,32 @@ class DbInventory {
 
         try{
 
-            val handler = Handler(Looper.getMainLooper())
+            val connect = DbConnect.connectDB()
+            val connect2 = connect.first
 
-            DbConnect.connectDB(handler) { connectionResult ->
-                val connection: Connection? = connectionResult.connection
-                val errorMessage: String? = connectionResult.errorMessage
-
-                if (connection != null) {
-
-                    // Cadena de texto Query SQL
-                    val query = "UPDATE TablaTemporal\n" +
-                            "SET TMIUniCon = ?, TMILinEst = 1\n" +
-                            "FROM (\n" +
-                            "    SELECT *, ROW_NUMBER() OVER (ORDER BY (SELECT 1)) AS RowNum\n" +
-                            "    FROM TRTMINVL\n" +
-                            "\tWHERE TMINro = ?\n" +
-                            ") AS TablaTemporal\n" +
-                            "WHERE TablaTemporal.RowNum = ?"
-
-                    // Crear una instancia de PreparedStatement
-                    val stmt = connection.prepareStatement(query)
-
-                    // Establecer los parámetros en el PreparedStatement
-                    unidades?.toFloat()?.let { stmt.setFloat(1, it) }
-                    stmt.setString(2, id)
-                    stmt.setInt(3, linea)
-
-                    // Ejecutar la actualizacion
-                    stmt.executeUpdate()
-
-                    //cierra conexiones
-                    stmt.close()
-                    connection.close()
-
-                } else {
-                    println("Error en la conexión: $errorMessage")
-                }
+            //si es nulo, finaliza
+            if(connect2 == null) {
+                println("Conexión nula")
+                return
             }
+
+            // Cadena de texto Query SQL
+            val query = DbSentences.sqlInventarioUpdateLinea
+
+            // Crear una instancia de PreparedStatement
+            val stmt = connect2.prepareStatement(query)
+
+            // Establecer los parámetros en el PreparedStatement
+            unidades?.toFloat()?.let { stmt.setFloat(1, it) }
+            stmt.setString(2, id)
+            stmt.setInt(3, linea)
+
+            // Ejecutar la actualizacion
+            stmt.executeUpdate()
+
+            //cierra conexiones
+            stmt.close()
+            connect2.close()
 
         }catch(e : Exception){
             println(e)
@@ -229,74 +205,63 @@ class DbInventory {
 
         try{
 
-            val handler = Handler(Looper.getMainLooper())
+            val connect = DbConnect.connectDB()
+            val connect2 = connect.first
 
-            DbConnect.connectDB(handler) { connectionResult ->
-                val connection: Connection? = connectionResult.connection
-                val errorMessage: String? = connectionResult.errorMessage
+            //si es nulo, finaliza
+            if(connect2 == null) {
+                println("Conexión nula")
+                return null
+            }
 
-                if (connection != null) {
+            //Cadena de texto Query SQL
+            val query = DbSentences.sqlInventarioLinea
 
-                    //Cadena de texto Query SQL
-                    val query = "SELECT * \n" +
-                            "FROM (\n" +
-                            "    SELECT *, ROW_NUMBER() OVER (ORDER BY (SELECT 1)) AS RowNum\n" +
-                            "    FROM TRTMINVL\n" +
-                            "\tWHERE TMINro = ?\n" +
-                            ") AS TablaTemporal\n" +
-                            "WHERE TablaTemporal.RowNum = ?"
+            // Crear una instancia de PreparedStatement
+            val stmt = connect2.prepareStatement(query)
 
-                    // Crear una instancia de PreparedStatement
-                    val stmt = connection.prepareStatement(query)
+            // Establecer el parámetro en el PreparedStatement
+            stmt.setString(1, id)
+            stmt.setInt(2, linea)
 
-                    // Establecer el parámetro en el PreparedStatement
-                    stmt.setString(1, id)
-                    stmt.setInt(2, linea)
+            val rs : ResultSet = stmt.executeQuery()
 
-                    val rs : ResultSet = stmt.executeQuery()
+            //Ejecucion
+            connect2.run {
 
-                    //Ejecucion
-                    connection.run {
+                //Bucle para recorrer la tabla SQL
+                while(rs.next()){
 
-                        //Bucle para recorrer la tabla SQL
-                        while(rs.next()){
+                        val resultado = InventarioLineas(
+                            rs.getString(1),
+                            rs.getString(2),
+                            rs.getString(3),
+                            rs.getString(4),
+                            rs.getString(5),
+                            rs.getString(6),
+                            rs.getString(7),
+                            rs.getString(8),
+                            rs.getString(9),
+                            rs.getString(10),
+                            rs.getString(11),
+                            rs.getInt(12)
+                        )
 
-                            val resultado = InventarioLineas(
-                                rs.getString(1),
-                                rs.getString(2),
-                                rs.getString(3),
-                                rs.getString(4),
-                                rs.getString(5),
-                                rs.getString(6),
-                                rs.getString(7),
-                                rs.getString(8),
-                                rs.getString(9),
-                                rs.getString(10),
-                                rs.getString(11),
-                                rs.getInt(12)
-                            )
+                        //cierra conexiones
+                        rs.close()
+                        stmt.close()
+                        close()
 
-                            //cierra conexiones
-                            rs.close()
-                            stmt.close()
-                            close()
-
-                            return@run resultado
-
-                        }
+                        return resultado
 
                     }
 
-                    //cierra conexiones
-                    rs.close()
-                    stmt.close()
-                    connection.close()
-
-
-                } else {
-                    println("Error en la conexión: $errorMessage")
                 }
-            }
+
+                //cierra conexiones
+                rs.close()
+                stmt.close()
+                connect2.close()
 
         }catch(e : Exception){
             println(e)
@@ -321,61 +286,51 @@ class DbInventory {
 
         try{
 
-            val handler = Handler(Looper.getMainLooper())
+            val connect = DbConnect.connectDB()
+            val connect2 = connect.first
 
-            DbConnect.connectDB(handler) { connectionResult ->
-                val connection: Connection? = connectionResult.connection
-                val errorMessage: String? = connectionResult.errorMessage
+            //si es nulo, finaliza
+            if(connect2 == null) {
+                println("Conexión nula")
+                return
+            }
 
-                if (connection != null) {
+            // Cadena de texto Query SQL
+            val query = DbSentences.sqlInventarioCheckLineas
 
-                    // Cadena de texto Query SQL
-                    val query = "SELECT \n" +
-                            "    CASE WHEN COUNT(*) = SUM(CASE WHEN TMILinEst = 1 THEN 1 ELSE 0 END) \n" +
-                            "         THEN 'True' \n" +
-                            "         ELSE 'False' \n" +
-                            "    END AS todas_las_lineas_con_TMINLinEst_igual_a_1\n" +
-                            "FROM TRTMINVL \n" +
-                            "WHERE TMINro = ?"
+            // Crear una instancia de PreparedStatement
+            val stmt = connect2.prepareStatement(query)
 
-                    // Crear una instancia de PreparedStatement
-                    val stmt = connection.prepareStatement(query)
+            // Establecer el parámetro en el PreparedStatement
+            stmt.setString(1, id)
 
-                    // Establecer el parámetro en el PreparedStatement
-                    stmt.setString(1, id)
+            val rs : ResultSet = stmt.executeQuery()
 
-                    val rs : ResultSet = stmt.executeQuery()
+            //Ejecucion
+            connect2.run {
 
-                    //Ejecucion
-                    connection.run {
+                //Bucle para recorrer la tabla SQL
+                while(rs.next()){
 
-                        //Bucle para recorrer la tabla SQL
-                        while(rs.next()){
+                    val resultado = rs.getString(DbSentences.stringTodasLineas).toBoolean()
 
-                            val resultado = rs.getString("todas_las_lineas_con_TMINLinEst_igual_a_1").toBoolean()
-
-                            if(resultado){
-                                updateInventario(id, username,2)
-                            }
-
-                            //cierra conexiones
-                            rs.close()
-                            stmt.close()
-                            close()
-
-                            return@connectDB
-                        }
+                    if(resultado){
+                        updateInventario(id, username,2)
                     }
 
                     //cierra conexiones
                     rs.close()
                     stmt.close()
-                    connection.close()
+                    close()
 
-                } else {
-                    println("Error en la conexión: $errorMessage")
+                    return
                 }
             }
+
+            //cierra conexiones
+            rs.close()
+            stmt.close()
+            connect2.close()
 
         }catch(e : Exception){
             println(e)
@@ -404,38 +359,32 @@ class DbInventory {
 
         try{
 
-            val handler = Handler(Looper.getMainLooper())
+            val connect = DbConnect.connectDB()
+            val connect2 = connect.first
 
-            DbConnect.connectDB(handler) { connectionResult ->
-                val connection: Connection? = connectionResult.connection
-                val errorMessage: String? = connectionResult.errorMessage
-
-                if (connection != null) {
-
-                    // Cadena de texto Query SQL
-                    val query = "UPDATE TRTMINV\n" +
-                            "SET TMIEst = ?, TMIUsuTer = ?\n" +
-                            "WHERE TMINro = ?"
-
-                    // Crear una instancia de PreparedStatement
-                    val stmt = connection.prepareStatement(query)
-
-                    // Establecer los parámetros en el PreparedStatement
-                    stmt.setInt(1, estado)
-                    stmt.setString(2, username)
-                    stmt.setString(3, id)
-
-                    // Ejecutar la actualizacion
-                    stmt.executeUpdate()
-
-                    //cierra conexiones
-                    stmt.close()
-                    connection.close()
-
-                } else {
-                    println("Error en la conexión: $errorMessage")
-                }
+            //si es nulo, finaliza
+            if(connect2 == null) {
+                println("Conexión nula")
+                return
             }
+
+            // Cadena de texto Query SQL
+            val query = DbSentences.sqlInventarioUpdate
+
+            // Crear una instancia de PreparedStatement
+            val stmt = connect2.prepareStatement(query)
+
+            // Establecer los parámetros en el PreparedStatement
+            stmt.setInt(1, estado)
+            stmt.setString(2, username)
+            stmt.setString(3, id)
+
+            // Ejecutar la actualizacion
+            stmt.executeUpdate()
+
+            //cierra conexiones
+            stmt.close()
+            connect2.close()
 
         }catch(e : Exception){
             println(e)

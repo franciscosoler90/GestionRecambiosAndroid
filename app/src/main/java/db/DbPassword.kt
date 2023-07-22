@@ -4,82 +4,84 @@
 
 package db
 
-import android.os.Handler
-import android.os.Looper
+import kotlinx.coroutines.DelicateCoroutinesApi
 import utilidades.EncryptTool
 import java.sql.Connection
-import java.sql.ResultSet
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-@Suppress("SameReturnValue")
 class DbPassword {
 
-    fun getPassword(username : String, password : String) : Boolean{
+    // Interfaz de devolución de llamada para notificar el resultado de la consulta de contraseña
+    interface OnPasswordReceivedListener {
+        fun onPasswordReceived(passwordMatches: Boolean)
+    }
 
-        var resultado = false
+    @OptIn(DelicateCoroutinesApi::class)
+    fun getPassword(username: String, password: String, listener: OnPasswordReceivedListener) {
 
-        //Si el nombre de usuario está vacio
         if (username.isEmpty()) {
-            return false
+            listener.onPasswordReceived(false)
+            return
         }
 
-        try{
+        try {
+            GlobalScope.launch(Dispatchers.IO) {
+                var resultado = false
+                var connection: Connection? = null
 
-            val handler = Handler(Looper.getMainLooper())
+                try {
+                    connection = DbConnectionManager.getConnection()
 
-            DbConnect.connectDB(handler) { connectionResult ->
-                val connection: Connection? = connectionResult.connection
-                val errorMessage: String? = connectionResult.errorMessage
+                    if (connection != null) {
 
-                if (connection != null) {
+                        val query = DbSentences.sqlPassword
 
-                    //Cadena de texto Query SQL
-                    val query = "SELECT UsuPas FROM TRUSU (NOLOCK) WHERE UsuCod = ?"
+                        val stmt = connection.prepareStatement(query)
+                        stmt.setString(1, username)
 
-                    // Crear una instancia de PreparedStatement
-                    val stmt = connection.prepareStatement(query)
+                        val rs = stmt.executeQuery()
 
-                    // Establecer el parámetro en el PreparedStatement
-                    stmt.setString(1, username)
-
-                    val rs : ResultSet = stmt.executeQuery()
-
-                    //Ejecución
-                    connection.run {
-
-                        //Cadena de texto vacia
+                        // Cadena de texto vacía
                         var pass = ""
 
-                        //Bucle para recorrer la tabla SQL
-                        while(rs.next()) {
-                            //obtiene el primer resultado
+                        // Bucle para recorrer la tabla SQL
+                        while (rs.next()) {
+                            // Obtiene el primer resultado
                             pass = rs.getString(1)
                         }
 
-                        //cierra conexiones
                         rs.close()
                         stmt.close()
-                        close()
 
-                        //Encriptacion de contraseña
+                        // Encriptación de contraseña
                         val encryptTool = EncryptTool()
-                        val password2 = encryptTool.encryptString(true,password)
+                        val password2 = encryptTool.encryptString(true, password)
 
                         resultado = password2 == pass
-
                     }
 
-                } else {
-                    println("Error en la conexión: $errorMessage")
+                    // Notificar el resultado en el hilo principal
+                    withContext(Dispatchers.Main) {
+                        listener.onPasswordReceived(resultado)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    // Notificar el error en el hilo principal
+                    withContext(Dispatchers.Main) {
+                        listener.onPasswordReceived(false)
+                    }
+                } finally {
+                    connection?.close()
                 }
             }
-
-            return resultado
-
-        }catch(e : Exception){
-            println(e)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            listener.onPasswordReceived(false)
         }
-
-        return false
-
     }
+
+
 }

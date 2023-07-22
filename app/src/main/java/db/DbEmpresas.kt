@@ -4,80 +4,74 @@
 
 package db
 
-import android.os.Handler
-import android.os.Looper
 import data.Empresa
+import kotlinx.coroutines.DelicateCoroutinesApi
 import java.sql.Connection
-import java.sql.ResultSet
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class DbEmpresas {
 
-    fun getCompanies(username : String?) : List<Empresa>{
+    interface OnCompaniesDataReceivedListener {
+        fun onCompaniesDataReceived(companies: List<Empresa>)
+        fun onError(errorMessage: String)
+    }
 
-        val lista : ArrayList<Empresa> = ArrayList()
+    @OptIn(DelicateCoroutinesApi::class)
+    fun getCompanies(username: String?, listener: OnCompaniesDataReceivedListener) {
 
-        //Comprueba si el nombre de usuario es nulo
+        val lista: ArrayList<Empresa> = ArrayList()
+
         if (username.isNullOrEmpty()) {
-            return lista.toList()
+            listener.onCompaniesDataReceived(lista.toList())
+            return
         }
 
-        try{
+        try {
+            GlobalScope.launch(Dispatchers.IO) {
+                var connection: Connection? = null
 
-            val handler = Handler(Looper.getMainLooper())
+                try {
+                    connection = DbConnectionManager.getConnection()
 
-            DbConnect.connectDB(handler) { connectionResult ->
-                val connection: Connection? = connectionResult.connection
-                val errorMessage: String? = connectionResult.errorMessage
+                    if (connection != null) {
 
-                if (connection != null) {
+                        val query = DbSentences.sqlEmpresas
 
-                    //Cadena de texto Query SQL
-                    val query =
-                        "SELECT EmpCod, EmpNom FROM TRUSU1 (NOLOCK)\n" +
-                                "INNER JOIN TREMP ON (TRUSU1.UsuEmpCodS = TREMP.EmpCod)\n" +
-                                "WHERE UsuCod = ?\n" +
-                                "ORDER BY EmpNom ASC"
+                        val stmt = connection.prepareStatement(query)
+                        stmt.setString(1, username)
 
-                    // Crear una instancia de PreparedStatement
-                    val stmt = connection.prepareStatement(query)
+                        val rs = stmt.executeQuery()
 
-                    // Establecer el parámetro en el PreparedStatement
-                    stmt.setString(1, username)
-
-                    val rs : ResultSet = stmt.executeQuery()
-
-                    //Ejecucion
-                    connection.run {
-
-                        //Bucle para recorrer la tabla SQL
-                        while(rs.next()){
-
+                        while (rs.next()) {
                             val empresa = Empresa(
                                 rs.getString(1),
                                 rs.getString(2)
                             )
-                            //Añade a la lista
                             lista.add(empresa)
                         }
 
-                        //cierra conexiones
                         rs.close()
                         stmt.close()
-                        close()
-
                     }
 
-                } else {
-                    println("Error en la conexión: $errorMessage")
+                    withContext(Dispatchers.Main) {
+                        listener.onCompaniesDataReceived(lista.toList())
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    withContext(Dispatchers.Main) {
+                        listener.onError("Error en la conexión: ${e.message}")
+                    }
+                } finally {
+                    connection?.close()
                 }
             }
-
-        }catch(e : Exception){
-            println(e)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            listener.onError(e.toString())
         }
-
-        //Devuelve la lista
-        return lista.toList()
-
     }
 }
